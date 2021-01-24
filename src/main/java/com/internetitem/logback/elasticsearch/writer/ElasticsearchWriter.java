@@ -5,7 +5,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -24,9 +28,29 @@ public class ElasticsearchWriter implements SafeWriter {
 
 	private boolean bufferExceeded;
 
+	private Proxy proxy;
+
 	public ElasticsearchWriter(ErrorReporter errorReporter, Settings settings, HttpRequestHeaders headers) {
+		
 		this.errorReporter = errorReporter;
 		this.settings = settings;
+
+		final String proxyUserName = settings.getProxyUserName();
+		final String proxyPassword = settings.getProxyPassword();
+
+		Authenticator.setDefault( new Authenticator() {
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				if (getRequestorType().equals( RequestorType.PROXY )) {
+					return new PasswordAuthentication( proxyUserName, proxyPassword.toCharArray() );
+				}
+				return super.getPasswordAuthentication();
+			}
+		} );
+
+		proxy = new Proxy( Proxy.Type.HTTP, new InetSocketAddress( settings.getProxyHost(), settings.getProxyPort() ) );
+		
+
 		this.headerList = headers != null && headers.getHeaders() != null
 			? headers.getHeaders()
 			: Collections.<HttpRequestHeader>emptyList();
@@ -51,8 +75,8 @@ public class ElasticsearchWriter implements SafeWriter {
 		if (sendBuffer.length() <= 0) {
 			return;
 		}
-
-		HttpURLConnection urlConnection = (HttpURLConnection)(settings.getUrl().openConnection());
+	
+		HttpURLConnection urlConnection = (HttpURLConnection)(settings.getUrl().openConnection(proxy));
 		try {
 			urlConnection.setDoInput(true);
 			urlConnection.setDoOutput(true);

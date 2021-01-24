@@ -24,6 +24,11 @@ public class Settings {
 	private Authentication authentication;
 	private int maxMessageSize = -1;
 
+	private String proxyHost = "";
+	private int proxyPort = 8080;
+	private String proxyUserName = "";
+	private String proxyPassword = "";
+
 	public String getIndex() {
 		return index;
 	}
@@ -161,5 +166,37 @@ public class Settings {
 
 	public void setMaxMessageSize(int maxMessageSize) {
 		this.maxMessageSize = maxMessageSize;
+	}
+
+	public String getProxyHost() {
+		return proxyHost;
+	}
+
+	public void setProxyHost(String proxyHost) {
+		this.proxyHost = proxyHost;
+	}
+
+	public String getProxyUserName() {
+		return proxyUserName;
+	}
+
+	public void setProxyUserName(String proxyUserName) {
+		this.proxyUserName = proxyUserName;
+	}
+
+	public String getProxyPassword() {
+		return proxyPassword;
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		this.proxyPassword = proxyPassword;
+	}
+
+	public int getProxyPort() {
+		return proxyPort;
+	}
+
+	public void setProxyPort(int proxyPort) {
+		this.proxyPort = proxyPort;
 	}
 }

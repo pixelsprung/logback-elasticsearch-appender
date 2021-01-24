@@ -138,4 +138,20 @@ public abstract class AbstractElasticsearchAppender<T> extends UnsynchronizedApp
     public void setMaxMessageSize(int maxMessageSize) {
     	settings.setMaxMessageSize(maxMessageSize);
 	}
+
+	public void setProxyHost(String proxyHost) {
+		settings.setProxyHost(proxyHost);
+	}
+
+	public void setProxyPort(int proxyPort) {
+		settings.setProxyPort(proxyPort);
+	}
+
+	public void setProxyUserName(String proxyUserName) {
+		settings.setProxyUserName(proxyUserName);
+	}
+
+	public void setProxyPassword(String proxyPassword) {
+		settings.setProxyPassword(proxyPassword);
+	}
 }
