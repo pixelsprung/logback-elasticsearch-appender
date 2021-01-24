@@ -48,9 +48,10 @@ public class ElasticsearchWriter implements SafeWriter {
 			}
 		} );
 
-		proxy = new Proxy( Proxy.Type.HTTP, new InetSocketAddress( settings.getProxyHost(), settings.getProxyPort() ) );
-		
-
+		if (settings.getProxyHost() != null && !settings.getProxyHost().equals("")) {
+			proxy = new Proxy( Proxy.Type.HTTP, new InetSocketAddress( settings.getProxyHost(), settings.getProxyPort() ) );
+		}
+			
 		this.headerList = headers != null && headers.getHeaders() != null
 			? headers.getHeaders()
 			: Collections.<HttpRequestHeader>emptyList();
@@ -76,7 +77,16 @@ public class ElasticsearchWriter implements SafeWriter {
 			return;
 		}
 	
-		HttpURLConnection urlConnection = (HttpURLConnection)(settings.getUrl().openConnection(proxy));
+		HttpURLConnection urlConnection;
+
+		// check if proxy has been initialized and therefore is required.
+		if (proxy != null) {
+			urlConnection = (HttpURLConnection)(settings.getUrl().openConnection(proxy));
+		} 
+		else {
+			urlConnection = (HttpURLConnection)(settings.getUrl().openConnection());
+		}
+		
 		try {
 			urlConnection.setDoInput(true);
 			urlConnection.setDoOutput(true);
